@@ -1,4 +1,4 @@
-﻿var dragonBones = {};
+var dragonBones = {};
 (function(){
 
 var SKELETON = "skeleton";
@@ -66,6 +66,8 @@ var A_ALPHA_MULTIPLIER = "aM";
 var A_RED_MULTIPLIER = "rM";
 var A_GREEN_MULTIPLIER = "gM";
 var A_BLUE_MULTIPLIER = "bM";
+
+var A_BLEND_MODE = "blend";
 
 var V_SOUND_LEFT = "l";
 var V_SOUND_RIGHT = "r";
@@ -233,49 +235,82 @@ function isMainLayer(_layer){
 	return false;
 }
 
+//to determine whether the layer is blank layer
+function isBoneLayer(layer)
+{
+	var frames = filterKeyFrames(layer.frames);
+	var i = frames.length;
+	while(i --)
+	{
+		if(getBoneSymbol(frames[i].elements))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 //To determine whether the item is valide armature.
 //If yes, return mainLayer and boneLayers
-function isArmatureItem(_item, _isChildArmature){
-	if(_item.symbolType != MOVIE_CLIP && _item.symbolType != GRAPHIC)
+function isArmatureItem(item, isChildArmature){
+	if(
+		item.symbolType != MOVIE_CLIP && 
+		item.symbolType != GRAPHIC
+	)
 	{
 		return null;
 	}
-	var _layersFiltered = [];
-	var _mainLayer;
-	for each(var _layer in _item.timeline.layers){
-		switch(_layer.layerType){
+	var layersFiltered = [];
+	var layers = item.timeline.layers;
+	var i = layers.length;
+	var layer;
+	var mainLayer;
+	while(i --)
+	{
+		layer = layers[i];
+		switch(layer.layerType)
+		{
 			case "folder":
 			case "guide":
 			case "mask":
 				break;
 			default:
-				if(isMainLayer(_layer)){
-					_mainLayer = _layer;
-				}else if(!isBlankLayer(_layer)){
-					_layersFiltered.unshift(_layer);
+				if(isMainLayer(layer))
+				{
+					mainLayer = layer;
+				}
+				else if(isBoneLayer(layer))
+				{
+					layersFiltered.push(layer);
 				}
 				break;
 		}
 	}
 	
-	if(_layersFiltered.length > 0){
-		if(_mainLayer){
-			_layersFiltered.unshift(_mainLayer);
-			return _layersFiltered;
-		}else if(_isChildArmature && _item.timeline.frameCount > 1){
-			_mainLayer = {};
-			_mainLayer.frames = [];
-			_mainLayer.frameCount = _item.timeline.frameCount;
+	if(layersFiltered.length > 0)
+	{
+		if(mainLayer)
+		{
+			layersFiltered.unshift(mainLayer);
+			return layersFiltered;
+		}
+		else if(isChildArmature && item.timeline.frameCount > 1)
+		{
+			//检测未加标签的子动画时，虽然frameCount大于1，但应更深入的检查是否各个图层只有一帧
 			
-			var _frame = { };
-			_frame.labelType = LABEL_TYPE_NAME;
-			_frame.name = "unnamed";
-			_frame.startFrame = 0;
-			_frame.duration = _mainLayer.frameCount;
+			mainLayer = {};
+			mainLayer.frameCount = item.timeline.frameCount;
+			mainLayer.frames = [];
 			
-			_mainLayer.frames.push(_frame);
-			_layersFiltered.unshift(_mainLayer);
-			return _layersFiltered;
+			var frame = {};
+			frame.labelType = LABEL_TYPE_NAME;
+			frame.name = "unnamed";
+			frame.startFrame = 0;
+			frame.duration = mainLayer.frameCount;
+			
+			mainLayer.frames.push(frame);
+			layersFiltered.unshift(mainLayer);
+			return layersFiltered;
 		}
 	}
 	return null;
@@ -378,6 +413,7 @@ function getMovementXML(_movementName, _duration, _item){
 			}
 		}
 	}
+	
 	return _xml;
 }
 
@@ -421,6 +457,7 @@ function getBoneXML(_name, _frameXML){
 		_xml.@[A_PIVOT_X] = _frameXML.@[A_PIVOT_X];
 		_xml.@[A_PIVOT_Y] = _frameXML.@[A_PIVOT_Y];
 		_xml.@[A_Z] = _frameXML.@[A_Z];
+		
 		armatureXML.appendChild(_xml);
 	}
 	return _xml;
@@ -463,7 +500,8 @@ function generateMovement(_item, _mainFrame, _layers){
 	var _symbol;
 	var _boneName;
 	
-	for each(var _layer in _layers){
+	for (var layerIndex = 0; layerIndex < _layers.length; layerIndex++){
+		var _layer = _layers[layerIndex]
 		_boneName = formatName(_layer);
 		_boneZDic[_boneName] = _boneZDic[_boneName] || [];
 		_movementBoneXML = null;
@@ -508,7 +546,7 @@ function generateMovement(_item, _mainFrame, _layers){
 				//
 				break;
 			}
-			_frameXML = generateFrame(_frame, _boneName, _symbol, _z, _noAutoEasing);
+			_frameXML = generateFrame(_frame, _boneName, _symbol, layerIndex, _noAutoEasing);
 			addFrameToMovementBone(_frameXML, _frameStart, _frameDuration, _movementBoneXML);
 		}
 	}
@@ -586,6 +624,31 @@ function generateFrame(_frame, _boneName, _symbol, _z, _noAutoEasing){
 	_frameXML.@[A_SKEW_Y] = formatNumber(_symbol.skewY);
 	_frameXML.@[A_SCALE_X] = formatNumber(_symbol.scaleX);
 	_frameXML.@[A_SCALE_Y] = formatNumber(_symbol.scaleY);
+	var blendMode = _symbol.blendMode;
+	var blendNum = 0;
+	if (blendMode == "normal") 
+	{
+		blendNum = 0;
+	} 
+	else if (blendMode == "multiply") 
+	{
+		blendNum = 3;
+	}
+	else if (blendMode == "screen") 
+	{
+		blendNum = 5;
+	}
+	else if (blendMode == "add") 
+	{
+		blendNum = 8;
+	}
+	
+	if (blendNum > 0) 
+	{
+		_frameXML.@[A_BLEND_MODE] = blendNum
+	}
+	
+	trace("blending type " + _symbol.blendMode);
 	helpPoint = _symbol.getTransformationPoint();
 	
 	if(_symbol.instanceType == BITMAP)
@@ -797,6 +860,7 @@ dragonBones.getArmatureList = function(_isSelected, armatureNames){
 	if(errorDOM()){
 		return false;
 	}
+	
 	var _timeline = currentDom.getTimeline();
 	
 	currentItemBackup = _timeline.libraryItem;
@@ -838,6 +902,7 @@ dragonBones.getArmatureList = function(_isSelected, armatureNames){
 			_xml.appendChild(_itemXML);
 		}
 	}
+	
 	return _xml.toXMLString();
 }
 
