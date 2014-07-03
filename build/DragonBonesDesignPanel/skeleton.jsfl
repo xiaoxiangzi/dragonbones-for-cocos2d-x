@@ -648,7 +648,6 @@ function generateFrame(_frame, _boneName, _symbol, _z, _noAutoEasing){
 		_frameXML.@[A_BLEND_MODE] = blendNum
 	}
 	
-	trace("blending type " + _symbol.blendMode);
 	helpPoint = _symbol.getTransformationPoint();
 	
 	if(_symbol.instanceType == BITMAP)

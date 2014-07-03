@@ -212,9 +212,14 @@ package model
 		{
 			for each(var displayXML:XML in getDisplayXMLList(_skeletonXML))
 			{
-				var subTextureName:String = displayXML.attribute(ConstValues.A_NAME);
-				subTextureName = subTextureName.split("/").join("-");
-				displayXML.@[ConstValues.A_NAME] = subTextureName;
+				var isArmature:int = displayXML.attribute(ConstValues.A_IS_ARMATURE);
+				if (isArmature != 1) 
+				{
+					// 针对非嵌套元件，修改display纹理名
+					var subTextureName:String = displayXML.attribute(ConstValues.A_NAME);
+					subTextureName = subTextureName.split("/").join("-");
+					displayXML.@[ConstValues.A_NAME] = subTextureName;	
+				}
 			}
 			
 			for each(var subTextureXML:XML in getSubTextureXMLList(_textureAtlasXML))
