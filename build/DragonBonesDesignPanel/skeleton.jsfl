@@ -505,7 +505,7 @@ function generateMovement(_item, _mainFrame, _layers){
 	var _boneName;
 	
 	for (var layerIndex = 0; layerIndex < _layers.length; layerIndex++){
-		var _layer = _layers[layerIndex]
+		var _layer = _layers[layerIndex];
 		_boneName = formatName(_layer);
 		_boneZDic[_boneName] = _boneZDic[_boneName] || [];
 		_movementBoneXML = null;
@@ -649,7 +649,7 @@ function generateFrame(_frame, _boneName, _symbol, _z, _noAutoEasing){
 	
 	if (blendNum > 0) 
 	{
-		_frameXML.@[A_BLEND_MODE] = blendNum
+		_frameXML.@[A_BLEND_MODE] = blendNum;
 	}
 	
 	helpPoint = _symbol.getTransformationPoint();
