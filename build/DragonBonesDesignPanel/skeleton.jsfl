@@ -457,6 +457,10 @@ function getBoneXML(_name, _frameXML){
 		_xml.@[A_PIVOT_X] = _frameXML.@[A_PIVOT_X];
 		_xml.@[A_PIVOT_Y] = _frameXML.@[A_PIVOT_Y];
 		_xml.@[A_Z] = _frameXML.@[A_Z];
+		var blendType = _frameXML.@[A_BLEND_MODE];
+		if (blendType > 0) {
+			_xml.@[A_BLEND_MODE] = blendType;
+		}
 		
 		armatureXML.appendChild(_xml);
 	}
