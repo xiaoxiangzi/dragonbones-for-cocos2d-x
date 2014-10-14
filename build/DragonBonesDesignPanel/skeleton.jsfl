@@ -67,7 +67,7 @@ var A_RED_MULTIPLIER = "rM";
 var A_GREEN_MULTIPLIER = "gM";
 var A_BLUE_MULTIPLIER = "bM";
 
-var A_BLEND_MODE = "blend";
+var A_BLEND_MODE = "bd";
 
 var V_SOUND_LEFT = "l";
 var V_SOUND_RIGHT = "r";
