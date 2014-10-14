@@ -150,29 +150,29 @@ package model
 				}
 				if(xml.@[ConstValues.A_WIDTH].length() > 0)
 				{
-					xml.@[ConstValues.A_WIDTH] = Math.ceil(Number(xml.@[ConstValues.A_WIDTH]) * scale);
+					xml.@[ConstValues.A_WIDTH] = formatNumber(Number(xml.@[ConstValues.A_WIDTH]) * scale);
 				}
 				if(xml.@[ConstValues.A_HEIGHT].length() > 0)
 				{
-					xml.@[ConstValues.A_HEIGHT] = Math.ceil(Number(xml.@[ConstValues.A_HEIGHT]) * scale);
+					xml.@[ConstValues.A_HEIGHT] = formatNumber(Number(xml.@[ConstValues.A_HEIGHT]) * scale);
 				}
 				//====2013-08-30 zrong start
 				//for cocos2d-x
 				if(xml.@[ConstValues.A_COCOS2D_X].length() > 0)
 				{
-					xml.@[ConstValues.A_COCOS2D_X] = Math.ceil(Number(xml.@[ConstValues.A_COCOS2D_X]) * scale);
+					xml.@[ConstValues.A_COCOS2D_X] = formatNumber(Number(xml.@[ConstValues.A_COCOS2D_X]) * scale);
 				}
 				if(xml.@[ConstValues.A_COCOS2D_Y].length() > 0)
 				{
-					xml.@[ConstValues.A_COCOS2D_Y] = Math.ceil(Number(xml.@[ConstValues.A_COCOS2D_Y]) * scale);
+					xml.@[ConstValues.A_COCOS2D_Y] = formatNumber(Number(xml.@[ConstValues.A_COCOS2D_Y]) * scale);
 				}
 				if(xml.@[ConstValues.A_COCOS2D_PIVOT_X].length() > 0)
 				{
-					xml.@[ConstValues.A_COCOS2D_PIVOT_X] = Math.ceil(Number(xml.@[ConstValues.A_COCOS2D_PIVOT_X]) * scale);
+					xml.@[ConstValues.A_COCOS2D_PIVOT_X] = formatNumber(Number(xml.@[ConstValues.A_COCOS2D_PIVOT_X]) * scale);
 				}
 				if(xml.@[ConstValues.A_COCOS2D_PIVOT_Y].length() > 0)
 				{
-					xml.@[ConstValues.A_COCOS2D_PIVOT_Y] = Math.ceil(Number(xml.@[ConstValues.A_COCOS2D_PIVOT_Y]) * scale);
+					xml.@[ConstValues.A_COCOS2D_PIVOT_Y] = formatNumber(Number(xml.@[ConstValues.A_COCOS2D_PIVOT_Y]) * scale);
 				}
 				//====2013-08-30 zrong end
 			}
@@ -436,9 +436,9 @@ package model
 		}
 		
 		
-		private function formatNumber(num:Number, retain:uint = 100):Number
+		private function formatNumber(num:Number, retain:uint = 1000):Number
 		{
-			retain = retain || 100;
+			retain = retain || 1000;
 			return Math.round(num * retain) / retain;
 		}
 		
