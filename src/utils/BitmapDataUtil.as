@@ -6,6 +6,8 @@ package utils
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
+	import model.JSFLProxy;
+	
 	public class BitmapDataUtil
 	{
 		public static function getSubBitmapDataDic(bitmapData:BitmapData, rectDic:Object):Object
@@ -13,6 +15,7 @@ package utils
 			var subBitmapDataDic:Object = {};
 			for(var subTextureName:String in rectDic)
 			{
+				JSFLProxy.jsflTrace("export bitmap: " + subTextureName);
 				var rect:Rectangle = rectDic[subTextureName];
 				var matrix:Matrix = new Matrix();
 				matrix.tx = -rect.x;

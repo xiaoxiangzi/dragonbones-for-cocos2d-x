@@ -1,8 +1,5 @@
 package control
 {
-	import dragonBones.objects.XMLDataParser;
-	import dragonBones.utils.ConstValues;
-	
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.events.Event;
@@ -10,6 +7,9 @@ package control
 	import flash.geom.Matrix;
 	import flash.net.FileReference;
 	import flash.utils.ByteArray;
+	
+	import dragonBones.objects.XMLDataParser;
+	import dragonBones.utils.ConstValues;
 	
 	import message.Message;
 	import message.MessageDispatcher;
@@ -69,6 +69,7 @@ package control
 			var dataBytes:ByteArray;
 			var zip:Zip;
 			var date:Date;
+			var errorInfo:String;
 			
 			_skeletonXMLProxy = _importDataProxy.skeletonXMLProxy;
 			_bitmapData = _importDataProxy.textureAtlas.bitmapData;
@@ -129,6 +130,7 @@ package control
 					}
 					catch(_e:Error)
 					{
+						errorInfo = _e.toString();
 						break;
 					}
 				case 1:
@@ -151,6 +153,7 @@ package control
 					}
 					catch(_e:Error)
 					{
+						errorInfo = _e.toString();
 						break;
 					}
 				case 2:
@@ -196,6 +199,7 @@ package control
 					}
 					catch(_e:Error)
 					{
+						errorInfo = _e.toString();
 						break;
 					}
 				case 4:
@@ -261,6 +265,7 @@ package control
 					}
 					catch(_e:Error)
 					{
+						errorInfo = _e.toString();
 						break;
 					}
 					//====2013-09-22 zrong start
@@ -305,6 +310,7 @@ package control
 						}
 						catch(_e:Error)
 						{
+							errorInfo = _e.toString();
 							break;
 						}
 						//====2013-09-22 zrong end
@@ -312,7 +318,8 @@ package control
 					break;
 			}
 			_isExporting = false;
-			MessageDispatcher.dispatchEvent(MessageDispatcher.EXPORT_ERROR);
+			JSFLProxy.jsflTrace(errorInfo);
+			MessageDispatcher.dispatchEvent(MessageDispatcher.EXPORT_ERROR, errorInfo);
 		}
 		
 		//====2013-09-22 zrong start

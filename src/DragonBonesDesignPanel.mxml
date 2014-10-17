@@ -170,7 +170,7 @@
 						break;
 					case MessageDispatcher.EXPORT_ERROR:
 						clearAlert();
-						_alert = Alert.show(resourceManager.getString('resources', 'exportError'));
+						_alert = Alert.show(resourceManager.getString('resources', 'exportError') + "\n" + e.parameters[0]);
 						break;
 					case MessageDispatcher.EXPORT_COMPLETE:
 						clearAlert();
